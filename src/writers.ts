@@ -11,28 +11,53 @@ export async function handleTransfer({
   mysql
 }: Parameters<CheckpointWriter>[0]) {
   if (!rawEvent) return;
+  console.log(rawEvent.data[2])
   const format = 'from, to, value(uint256)';
   const data: any = getEvent(rawEvent.data, format);
   let token: Token;
-  let account: Account;
+  let fromAccount: Account;
+  let toAccount: Account;
 
   // If token isn't indexed yet we add it, else we load it
   if (await newToken(toAddress(rawEvent.from_address), mysql)) {
     token = await createToken(toAddress(rawEvent.from_address));
-    await mysql.queryAsync(`INSERT IGNORE INTO tokens SET '${token}'`);
+    await mysql.queryAsync(`INSERT IGNORE INTO tokens SET ?`, [token]);
   } else {
     token = await loadToken(toAddress(rawEvent.from_address), mysql)
   }
 
-  // If account isn't indexed yet we add it, else we load it
-  const accountId = token.id + '-' + toAddress(data.from);
-  if (await newAccount(accountId, mysql)) {
-    account = await createAccount(token, toAddress(data.from));
-    await mysql.queryAsync(`INSERT IGNORE INTO tokens SET '${account}'`);
+
+  // If accounts aren't indexed yet we add them, else we load them
+  // First with fromAccount
+  const fromId = token.id + '-' + toAddress(data.from);
+  if (await newAccount(fromId, mysql)) {
+    fromAccount = await createAccount(token, rawEvent, toAddress(data.from), tx, block);
+    await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [fromAccount]);
   } else {
-    account = await loadAccount(accountId, mysql);
+    fromAccount = await loadAccount(fromId, mysql);
+  }
+  // Then with toAccount
+  const toId = token.id + '-' + toAddress(data.to);
+  if (await newAccount(toId, mysql)) {
+    toAccount = await createAccount(token, rawEvent, toAddress(data.to), tx, block);
+    await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [toAccount]);
+  } else {
+    toAccount = await loadAccount(toId, mysql);
   }
 
-  // Once account is fetched we update it
-  
+  // Updating balances
+  fromAccount.balance -= data.value
+  toAccount.balance += data.value;
+  // Updating raw balances
+  fromAccount.rawBalance -= data.value
+  toAccount.rawBalance += data.value;
+  // Updating modified field
+  fromAccount.modified = block.timestamp;
+  toAccount.modified = block.timestamp;
+  // Updating tx field
+  fromAccount.tx = tx.transaction_hash!;
+  toAccount.tx = tx.transaction_hash!;
+
+  // Indexing accounts
+
 }
