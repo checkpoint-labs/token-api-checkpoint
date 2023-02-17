@@ -16,11 +16,16 @@ export const hexStrArrToStr = (data, start: number, length: number | bigint): st
   return shortStringArrToStr(dataSlice.map(m => BigInt(m)));
 };
 
+export function convertToDecimal(num: number, decimals: number): number {
+  num /= 10 ** decimals;
+  return num;
+}
+
 export function hexToStr(data: string): string {
   var hex = data.toString();
   var str = '';
   for (let i = 0; i < hex.length; i += 2)
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
   return str;
 }
 
@@ -49,4 +54,3 @@ export function getEvent(data: string[], format: string) {
   });
   return event;
 }
-

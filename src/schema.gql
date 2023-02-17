@@ -5,7 +5,7 @@ type AccountToken {
   account: String
   token: Token
   balance: Float # Parsed balance based on token decimals
-  rawBalance: BigInt # Raw balance without decimals 
+  rawBalance: BigInt # Raw balance without decimals
   modified: Int # Last modified timestamp in seconds
   tx: String # Last transaction that modified balance
 }
