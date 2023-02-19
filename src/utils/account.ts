@@ -52,6 +52,8 @@ export async function createAccount(
 }
 
 export async function loadAccount(accountId: string, mysql) {
-  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ${accountId}`);
+  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
+    accountId
+  ]);
   return account[0];
 }

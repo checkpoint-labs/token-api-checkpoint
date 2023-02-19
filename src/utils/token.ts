@@ -21,7 +21,9 @@ export type Token = {
 };
 
 export async function newToken(tokenAddress: string, mysql): Promise<boolean> {
-  const newToken = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = '${tokenAddress}'`);
+  const newToken = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [
+    tokenAddress
+  ]);
   if (newToken.length) return false;
   else return true;
 }
@@ -33,23 +35,21 @@ export async function createToken(tokenAddress: string): Promise<Token> {
   const erc20 = new starknet.Contract(tokenAbi, tokenAddress, provider);
   const symbol = await erc20.symbol();
   const name = await erc20.name();
-  // console.log('test')
-  // const decimals = await erc20.decimals();
-  // console.log('test')
-  // console.log('test', decimals.res)
-  // const totalSupply = await erc20.totalSupply()
+  const decimals = await erc20.decimals();
+  const totalSupply = await erc20.totalSupply();
   const metadata: Token = {
     id: tokenAddress,
     symbol: hexToStr(symbol.res.toString(16)),
     name: hexToStr(name.res.toString(16)),
-    decimals: 6,
-    // totalSupply: totalSupply.res.low.toFixed(decimals.res),
-    totalSupply: BigInt(10)
+    decimals: decimals.res.toNumber(),
+    totalSupply: BigInt(parseInt(totalSupply.res.low.toString(16), 16))
   };
   return metadata;
 }
 
 export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
-  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = '${tokenAddress}'`);
+  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [
+    tokenAddress
+  ]);
   return token[0];
 }

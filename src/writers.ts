@@ -15,7 +15,7 @@ export async function handleTransfer({
   let token: Token;
   let fromAccount: Account;
   let toAccount: Account;
-  console.log('author :', data.to)
+  console.log('author :', data.to);
   // If token isn't indexed yet we add it, else we load it
   if (await newToken(toAddress(rawEvent.from_address), mysql)) {
     token = await createToken(toAddress(rawEvent.from_address));
@@ -58,9 +58,9 @@ export async function handleTransfer({
 
   // Indexing accounts
   await mysql.queryAsync(
-    `UPDATE accounttokens SET balance='${fromAccount.balance}', modified='${fromAccount.modified}', tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`
+    `UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]
   );
   await mysql.queryAsync(
-    `UPDATE accounttokens SET balance='${toAccount.balance}', modified='${toAccount.modified}', tx='${toAccount.tx}' WHERE id='${toAccount.id}'`
+    `UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]
   );
 }
