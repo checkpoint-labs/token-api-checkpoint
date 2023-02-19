@@ -19,7 +19,7 @@ export type Account = {
   account: string;
   token: string;
   balance: number;
-  rawBalance: bigint;
+  // rawBalance: bigint;
   modified: number;
   tx: string;
 };
@@ -39,17 +39,12 @@ export async function createAccount(
   block
 ): Promise<Account> {
   const accountId = token.id + '-' + accountAddress;
-  const tokenAbi = JSON.parse(
-    fs.readFileSync(path.join(__dirname, './abis/erc20.json')).toString('ascii')
-  );
-  const erc20 = new starknet.Contract(tokenAbi, token.id, provider);
-  const balance = await erc20.balanceOf(accountAddress);
   const account: Account = {
     id: accountId,
     account: accountAddress,
     token: token.id,
-    balance: convertToDecimal(balance.res.low, token.decimals),
-    rawBalance: balance.res.low,
+    balance: convertToDecimal(0, token.decimals),
+    // rawBalance: balance.res.low,
     modified: block.timestamp / 1000,
     tx: tx.transaction_hash
   };
@@ -57,5 +52,6 @@ export async function createAccount(
 }
 
 export async function loadAccount(accountId: string, mysql) {
-  return await mysql.queryAsync(`SELECT * FROM accountTokens WHERE id = ${accountId}`);
+  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ${accountId}`);
+  return account[0];
 }

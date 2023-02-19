@@ -50,5 +50,6 @@ export async function createToken(tokenAddress: string): Promise<Token> {
 }
 
 export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
-  return await mysql.queryAsync(`SELECT * FROM tokens WHERE id = '${tokenAddress}'`);
+  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = '${tokenAddress}'`);
+  return token[0];
 }

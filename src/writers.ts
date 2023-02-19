@@ -15,7 +15,7 @@ export async function handleTransfer({
   let token: Token;
   let fromAccount: Account;
   let toAccount: Account;
-
+  console.log('author :', data.to)
   // If token isn't indexed yet we add it, else we load it
   if (await newToken(toAddress(rawEvent.from_address), mysql)) {
     token = await createToken(toAddress(rawEvent.from_address));
@@ -33,6 +33,7 @@ export async function handleTransfer({
   } else {
     fromAccount = await loadAccount(fromId, mysql);
   }
+
   // Then with toAccount
   const toId = token.id + '-' + toAddress(data.to);
   if (await newAccount(toId, mysql)) {
@@ -46,8 +47,8 @@ export async function handleTransfer({
   fromAccount.balance -= data.value;
   toAccount.balance += data.value;
   // Updating raw balances
-  fromAccount.rawBalance = fromAccount.rawBalance - BigInt(data.value);
-  toAccount.rawBalance += data.value;
+  // fromAccount.rawBalance = fromAccount.rawBalance - data.value;
+  // toAccount.rawBalance += data.value;
   // Updating modified field
   fromAccount.modified = block.timestamp;
   toAccount.modified = block.timestamp;
@@ -57,9 +58,9 @@ export async function handleTransfer({
 
   // Indexing accounts
   await mysql.queryAsync(
-    `UPDATE accounttokens SET balance='${fromAccount.balance}', rawBalance='${fromAccount.rawBalance}', modified='${fromAccount.modified}', tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`
+    `UPDATE accounttokens SET balance='${fromAccount.balance}', modified='${fromAccount.modified}', tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`
   );
   await mysql.queryAsync(
-    `UPDATE accounttokens SET balance='${toAccount.balance}', rawBalance='${toAccount.rawBalance}', modified='${toAccount.modified}', tx='${toAccount.tx}' WHERE id='${toAccount.id}'`
+    `UPDATE accounttokens SET balance='${toAccount.balance}', modified='${toAccount.modified}', tx='${toAccount.tx}' WHERE id='${toAccount.id}'`
   );
 }
