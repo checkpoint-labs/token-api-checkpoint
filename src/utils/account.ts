@@ -31,7 +31,7 @@ export async function createAccount(
     account: accountAddress,
     token: token.id,
     balance: convertToDecimal(0, token.decimals),
-    // rawBalance: balance.res.low,
+    // rawBalance: BigInt(0),
     modified: block.timestamp / 1000,
     tx: tx.transaction_hash
   };
@@ -39,8 +39,6 @@ export async function createAccount(
 }
 
 export async function loadAccount(accountId: string, mysql) {
-  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
-    accountId
-  ]);
+  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [accountId]);
   return account[0];
 }

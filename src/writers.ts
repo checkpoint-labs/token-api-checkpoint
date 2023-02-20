@@ -57,10 +57,6 @@ export async function handleTransfer({
   toAccount.tx = tx.transaction_hash!;
 
   // Indexing accounts
-  await mysql.queryAsync(
-    `UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]
-  );
-  await mysql.queryAsync(
-    `UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]
-  );
+  await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]);
+  await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]);
 }

@@ -43,18 +43,18 @@ To fetch a list of Account's and their holdings try the following query:
 ```graphql
 query {
   accounttokens {
-    id,
-    account,
+    id
+    account
     token {
-      	id
-    	name
-    	symbol
-    	decimals
-    	totalSupply
+      id
+      name
+      symbol
+      decimals
+      totalSupply
     }
-    balance,
-    rawBalance,
-    modified,
+    balance
+    rawBalance
+    modified
     tx
   }
 }
@@ -63,7 +63,8 @@ query {
 To learn more about the different ways you can query the GraphQL API, visit the Checkpoint documentation [here](https://docs.checkpoint.fyi/).
 
 ## Test it
-After starting the indexer locally on port `3000`. You can use [this](https://checkpoint-token-api-ui.vercel.app/) deployed user interface to test it. Try with your account or with some whales from [Starkscan](https://starkscan.co/accounts)
+
+After starting the indexer locally on port `3000`. You can use [this](https://checkpoint-token-api-ui.vercel.app/) deployed user interface to test it. Try with your account or with some whales from [Starkscan](https://starkscan.co/accounts).
 
 ## License
 

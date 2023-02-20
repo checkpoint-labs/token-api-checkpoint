@@ -21,9 +21,7 @@ export type Token = {
 };
 
 export async function newToken(tokenAddress: string, mysql): Promise<boolean> {
-  const newToken = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [
-    tokenAddress
-  ]);
+  const newToken = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
   if (newToken.length) return false;
   else return true;
 }
@@ -48,8 +46,6 @@ export async function createToken(tokenAddress: string): Promise<Token> {
 }
 
 export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
-  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [
-    tokenAddress
-  ]);
+  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
   return token[0];
 }
