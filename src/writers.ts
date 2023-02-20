@@ -15,7 +15,7 @@ export async function handleTransfer({
   let token: Token;
   let fromAccount: Account;
   let toAccount: Account;
-  console.log('author :', data.to);
+
   // If token isn't indexed yet we add it, else we load it
   if (await newToken(toAddress(rawEvent.from_address), mysql)) {
     token = await createToken(toAddress(rawEvent.from_address));

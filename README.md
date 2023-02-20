@@ -1,15 +1,11 @@
-# StarkNet Token API
+# Starknet token api
 
-This is a template to quickly get started to use [Checkpoint](https://docs.checkpoint.fyi)
-to expose a GraphQL API to query data from your StarkNet contracts.
+This repo is a [Checkpoint](https://checkpoint.fyi) template that allows to retrieve all token holders from Starknet using the `global_events` feature available since the `v^0.1.0-beta.14` of Checkpoint.
 
 ## Getting started
 
-This starter project contains logic to index events from a StarkNet Poster contract that is defined in the
-[starknet-poster](https://github.com/snapshot-labs/starknet-poster/blob/master/contracts/Poster.cairo) repository.
-
 Create a copy of this repository by clicking **'Use this template'** button or clicking [this
-link](https://github.com/snapshot-labs/checkpoint-template/generate).
+link](https://github.com/snapshot-labs/token-api-checkpoint/generate).
 
 **Requirements**
 
@@ -42,23 +38,32 @@ yarn dev # for local development or else `yarn start` for production build.
 
 This will expose a GraphQL API endpoint locally at http://localhost:3000. You can easily interact with this endpoint using the graphiql interface by visiting http://localhost:3000 in your browser.
 
-To fetch a list of Post's try the following query:
+To fetch a list of Account's and their holdings try the following query:
 
 ```graphql
 query {
-  posts {
-    id
-    author
-    content
-    tag
-    created_at_block
-    created_at
-    tx_hash
+  accounttokens {
+    id,
+    account,
+    token {
+      	id
+    	name
+    	symbol
+    	decimals
+    	totalSupply
+    }
+    balance,
+    rawBalance,
+    modified,
+    tx
   }
 }
 ```
 
-To learn more about the different ways you can query the GraphQL API, visit the Checkpoint documentation [here](https://docs.checkpoint.fyi/core-concepts/entity-schema).
+To learn more about the different ways you can query the GraphQL API, visit the Checkpoint documentation [here](https://docs.checkpoint.fyi/).
+
+## Test it
+After starting the indexer locally on port `3000`. You can use [this](https://checkpoint-token-api-ui.vercel.app/) deployed user interface to test it. Try with your account or with some whales from [Starkscan](https://starkscan.co/accounts)
 
 ## License
 

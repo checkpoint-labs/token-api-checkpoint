@@ -1,18 +1,5 @@
-import * as starknet from 'starknet';
-import fs from 'fs';
-import path from 'path';
 import { Token } from './token';
-import { BigNumber } from '@ethersproject/bignumber';
 import { convertToDecimal, hexToStr } from './utils';
-
-const provider = new starknet.Provider({
-  sequencer: {
-    baseUrl: 'https://alpha4.starknet.io',
-    feederGatewayUrl: 'feeder_gateway',
-    gatewayUrl: 'gateway',
-    network: 'goerli-alpha'
-  }
-});
 
 export type Account = {
   id: string;
