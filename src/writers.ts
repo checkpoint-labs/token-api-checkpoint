@@ -1,4 +1,4 @@
-import { getEvent, toAddress } from './utils/utils';
+import { convertToDecimal, getEvent, toAddress } from './utils/utils';
 import type { CheckpointWriter } from '@snapshot-labs/checkpoint';
 import { createToken, isErc20, loadToken, newToken, Token } from './utils/token';
 import { createAccount, newAccount, Account, loadAccount } from './utils/account';
@@ -13,6 +13,7 @@ export async function handleTransfer({
   if (!(await isErc20(rawEvent.from_address, block.block_number))) return;
   const format = 'from, to, value(uint256)';
   const data: any = getEvent(rawEvent.data, format);
+  console.log(data.value)
   let token: Token;
   let fromAccount: Account;
   let toAccount: Account;
@@ -45,11 +46,12 @@ export async function handleTransfer({
   }
 
   // Updating balances
-  fromAccount.balance -= data.value;
-  toAccount.balance += data.value;
-  // Updating raw balances
-  // fromAccount.rawBalance = fromAccount.rawBalance - data.value;
-  // toAccount.rawBalance += data.value;
+  console.log(fromAccount.balance)
+  fromAccount.balance -= convertToDecimal(data.value, token.decimals);
+  toAccount.balance += convertToDecimal(data.value, token.decimals);
+  // // Updating raw balances
+  fromAccount.rawBalance -= data.value;
+  toAccount.rawBalance += data.value;
   // Updating modified field
   fromAccount.modified = block.timestamp;
   toAccount.modified = block.timestamp;
@@ -57,6 +59,6 @@ export async function handleTransfer({
   fromAccount.tx = tx.transaction_hash!;
   toAccount.tx = tx.transaction_hash!;
   // Indexing accounts
-  await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]);
-  await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]);
+  await mysql.queryAsync(`UPDATE accounttokens SET balance='${fromAccount.balance}', rawBalance='${fromAccount.rawBalance}', modified='${fromAccount.modified}', tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`);
+  await mysql.queryAsync(`UPDATE accounttokens SET balance='${toAccount.balance}', rawBalance='${toAccount.rawBalance}', modified='${toAccount.modified}', tx='${toAccount.tx}' WHERE id='${toAccount.id}'`);
 }

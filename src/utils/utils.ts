@@ -11,11 +11,6 @@ export const toAddress = bn => {
   }
 };
 
-export const hexStrArrToStr = (data, start: number, length: number | bigint): string => {
-  const dataSlice = data.slice(start, start + Number(length));
-  return shortStringArrToStr(dataSlice.map(m => BigInt(m)));
-};
-
 export function convertToDecimal(num: number, decimals: number): number {
   num /= 10 ** decimals;
   return num;

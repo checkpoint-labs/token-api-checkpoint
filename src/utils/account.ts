@@ -6,7 +6,7 @@ export type Account = {
   account: string;
   token: string;
   balance: number;
-  // rawBalance: bigint;
+  rawBalance: number;
   modified: number;
   tx: string;
 };
@@ -31,7 +31,7 @@ export async function createAccount(
     account: accountAddress,
     token: token.id,
     balance: convertToDecimal(0, token.decimals),
-    // rawBalance: BigInt(0),
+    rawBalance: 0,
     modified: block.timestamp / 1000,
     tx: tx.transaction_hash
   };
