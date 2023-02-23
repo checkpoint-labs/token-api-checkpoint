@@ -1,6 +1,6 @@
 import { getEvent, toAddress } from './utils/utils';
 import type { CheckpointWriter } from '@snapshot-labs/checkpoint';
-import { createToken, loadToken, newToken, Token } from './utils/token';
+import { createToken, isErc20, loadToken, newToken, Token } from './utils/token';
 import { createAccount, newAccount, Account, loadAccount } from './utils/account';
 
 export async function handleTransfer({
@@ -10,6 +10,8 @@ export async function handleTransfer({
   mysql
 }: Parameters<CheckpointWriter>[0]) {
   if (!rawEvent) return;
+  const test = await isErc20(rawEvent.from_address, block.block_number);
+  if (!test) return;
   const format = 'from, to, value(uint256)';
   const data: any = getEvent(rawEvent.data, format);
   let token: Token;
@@ -55,7 +57,7 @@ export async function handleTransfer({
   // Updating tx field
   fromAccount.tx = tx.transaction_hash!;
   toAccount.tx = tx.transaction_hash!;
-
+  console.log('test');
   // Indexing accounts
   await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]);
   await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]);
