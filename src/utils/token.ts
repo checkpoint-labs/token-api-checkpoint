@@ -52,10 +52,6 @@ export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
 }
 
 export async function isErc20(address: string, block_number) {
-  // We load the actual contract ABI
-  const classHash = await provider.getClassHashAt(address, block_number);
-  const contractClass = await provider.getClassByHash(classHash);
-  // Verify if ABI is from an ERC20 token
   const desiredFunctions = [
     'name',
     'decimals',
@@ -66,25 +62,19 @@ export async function isErc20(address: string, block_number) {
     'approve',
     'allowance'
   ];
-
   const undesiredFunctions = ['tokenURI'];
 
-  // Check if all desired functions are present in the ABI
-  for (const func of desiredFunctions) {
-    if (!contractClass.abi?.find((token: any) => token.name === func && token.type === 'function')) {
-      console.log(false, "Smart contract doesn't match desired functions");
-      return false;
-    }
-  }
+  const classHash = await provider.getClassHashAt(address, block_number);
+  const contractClass = await provider.getClassByHash(classHash);
 
-  // Check if no undesired functions are present in the ABI
-  for (const func of undesiredFunctions) {
-    if (contractClass.abi?.find((token: any) => token.name === func && token.type === 'function')) {
-      console.log(false, "Smart contract doesn't match desired functions");
-      return false;
-    }
-  }
+  const hasAllDesiredFunctions = desiredFunctions.every(func =>
+    contractClass.abi?.find(token => token.name === func && token.type === 'function')
+  );
+  const hasNoUndesiredFunctions = undesiredFunctions.every(
+    func => !contractClass.abi?.find(token => token.name === func && token.type === 'function')
+  );
 
-  console.log(true, "Smart contract matches desired functions");
-  return true;
+  const result = hasAllDesiredFunctions && hasNoUndesiredFunctions;
+  console.log(result, `Smart contract ${result ? 'matches' : "doesn't match"} desired functions`);
+  return result;
 }

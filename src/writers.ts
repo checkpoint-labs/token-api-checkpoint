@@ -10,8 +10,7 @@ export async function handleTransfer({
   mysql
 }: Parameters<CheckpointWriter>[0]) {
   if (!rawEvent) return;
-  const test = await isErc20(rawEvent.from_address, block.block_number);
-  if (!test) return;
+  if (!(await isErc20(rawEvent.from_address, block.block_number))) return;
   const format = 'from, to, value(uint256)';
   const data: any = getEvent(rawEvent.data, format);
   let token: Token;
@@ -57,7 +56,6 @@ export async function handleTransfer({
   // Updating tx field
   fromAccount.tx = tx.transaction_hash!;
   toAccount.tx = tx.transaction_hash!;
-  console.log('test');
   // Indexing accounts
   await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${fromAccount.id}'`, [fromAccount]);
   await mysql.queryAsync(`UPDATE accounttokens SET ? WHERE id='${toAccount.id}'`, [toAccount]);
