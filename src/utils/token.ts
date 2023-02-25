@@ -21,9 +21,9 @@ export type Token = {
 };
 
 export async function newToken(tokenAddress: string, mysql): Promise<boolean> {
-  const newToken = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
-  if (newToken.length) return false;
-  else return true;
+  const newToken = await loadToken(tokenAddress, mysql);
+  if (!newToken) return true;
+  else return false;
 }
 
 export async function createToken(tokenAddress: string): Promise<Token> {

@@ -18,8 +18,8 @@
   "dependencies": {
     "@ethersproject/address": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.1",
-    "@snapshot-labs/checkpoint": "^0.1.0-beta.15",
-    "@snapshot-labs/sx": "^0.1.0-beta.15",
+    "@snapshot-labs/checkpoint": "^0.1.0-beta.14",
+    "@snapshot-labs/sx": "^0.1.0-beta.14",
     "@types/bn.js": "^5.1.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.1",

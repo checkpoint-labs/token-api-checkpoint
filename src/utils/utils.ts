@@ -49,3 +49,11 @@ export function getEvent(data: string[], format: string) {
   });
   return event;
 }
+
+export function toId(id: string) {
+  if (id.startsWith('0x')) {
+    return id.slice(2);
+  } else {
+    return id;
+  }
+}

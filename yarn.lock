@@ -1057,7 +1057,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@snapshot-labs/checkpoint@^0.1.0-beta.15":
+"@snapshot-labs/checkpoint@^0.1.0-beta.14":
   version "0.1.0-beta.15"
   resolved "https://registry.yarnpkg.com/@snapshot-labs/checkpoint/-/checkpoint-0.1.0-beta.15.tgz#68cb6ab4f48aaf8c7c76c3bd02c4ab04f6dc6547"
   integrity sha512-pDNev7mWFHEZb952fvlMl5vWIqcw9MwePR0YKPBg8H2cfDfkYCpHDB1wjso0+W7Dk2N/VLq20LcdDMJ318bAyQ==
@@ -1077,10 +1077,10 @@
     pluralize "^8.0.0"
     starknet "^4.13.1"
 
-"@snapshot-labs/sx@^0.1.0-beta.15":
-  version "0.1.0-beta.19"
-  resolved "https://registry.yarnpkg.com/@snapshot-labs/sx/-/sx-0.1.0-beta.19.tgz#9dde448e31a6b18a3930efe398fc639483b9a5e3"
-  integrity sha512-NRG2d0xfQlvcH8trUqnezOCjRmS9JNR8UDHbz327M1PTzJhUtD8a8tr5iEa6uoZVmgihcZmsr+wLUfj51ixGaQ==
+"@snapshot-labs/sx@^0.1.0-beta.14":
+  version "0.1.0-beta.20"
+  resolved "https://registry.yarnpkg.com/@snapshot-labs/sx/-/sx-0.1.0-beta.20.tgz#6bc5edfeedf426a32f886d2d6eff0b27ba23866f"
+  integrity sha512-BKnxrwHfs6chaJnnj9BkcsGwo2BbB/VFbyaQabErorD0JLvzArLR8gOUTNvxkSQHUaA7Tznm+dl9RgOFhP5rXg==
   dependencies:
     "@ethereumjs/block" "^3.6.3"
     "@ethereumjs/common" "^2.6.5"

@@ -6,39 +6,36 @@ export type Account = {
   account: string;
   token: string;
   balance: number;
-  rawBalance: number;
+  rawBalance: bigint;
   modified: number;
   tx: string;
 };
 
 export async function newAccount(accountId: string, mysql): Promise<boolean> {
-  const newAccount = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
-    accountId
-  ]);
-  if (newAccount.length) return false;
-  else return true;
+  const newAccount = await loadAccount(accountId, mysql);
+  if (!newAccount) return true;
+  else return false;
 }
 
 export async function createAccount(
   token: Token,
-  accountAddress: string,
+  accountId: string,
   tx,
   block
 ): Promise<Account> {
-  const accountId = token.id + '-' + accountAddress;
   const account: Account = {
     id: accountId,
-    account: accountAddress,
+    account: accountId.split('-')[1],
     token: token.id,
     balance: convertToDecimal(0, token.decimals),
-    rawBalance: 0,
+    rawBalance: BigInt(0),
     modified: block.timestamp / 1000,
     tx: tx.transaction_hash
   };
   return account;
 }
 
-export async function loadAccount(accountId: string, mysql) {
-  let account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [accountId]);
+export async function loadAccount(accountId: string, mysql): Promise<Account> {
+  let account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [accountId]);
   return account[0];
 }
