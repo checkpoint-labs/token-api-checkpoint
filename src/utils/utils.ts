@@ -1,6 +1,5 @@
 import { getAddress } from '@ethersproject/address';
 import { BigNumber } from '@ethersproject/bignumber';
-import { shortStringArrToStr } from '@snapshot-labs/sx/dist/utils/strings';
 import { SplitUint256 } from '@snapshot-labs/sx/dist/utils/split-uint256';
 
 export const toAddress = bn => {
@@ -48,12 +47,4 @@ export function getEvent(data: string[], format: string) {
     if (param.endsWith('_len')) len = parseInt(BigInt(data[next]).toString());
   });
   return event;
-}
-
-export function toId(id: string) {
-  if (id.startsWith('0x')) {
-    return id.slice(2);
-  } else {
-    return id;
-  }
 }

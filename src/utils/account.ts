@@ -1,5 +1,5 @@
 import { Token } from './token';
-import { convertToDecimal, hexToStr } from './utils';
+import { convertToDecimal } from './utils';
 
 export type Account = {
   id: string;
@@ -17,12 +17,7 @@ export async function newAccount(accountId: string, mysql): Promise<boolean> {
   else return false;
 }
 
-export async function createAccount(
-  token: Token,
-  accountId: string,
-  tx,
-  block
-): Promise<Account> {
+export async function createAccount(token: Token, accountId: string, tx, block): Promise<Account> {
   const account: Account = {
     id: accountId,
     account: accountId.split('-')[1],
@@ -36,6 +31,8 @@ export async function createAccount(
 }
 
 export async function loadAccount(accountId: string, mysql): Promise<Account> {
-  let account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [accountId]);
+  let account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
+    accountId
+  ]);
   return account[0];
 }

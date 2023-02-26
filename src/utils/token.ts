@@ -41,7 +41,7 @@ export async function createToken(tokenAddress: string): Promise<Token> {
     name: hexToStr(name.res.toString(16)),
     decimals: decimals.res.toNumber(),
     totalSupply: convertToDecimal(totalSupply.res.low, decimals.res)
-  }
+  };
   return metadata;
 }
 

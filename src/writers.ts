@@ -1,4 +1,4 @@
-import { convertToDecimal, getEvent, hexToStr, toAddress } from './utils/utils';
+import { convertToDecimal, getEvent } from './utils/utils';
 import type { CheckpointWriter } from '@snapshot-labs/checkpoint';
 import { createToken, isErc20, loadToken, newToken, Token } from './utils/token';
 import { createAccount, newAccount, Account, loadAccount } from './utils/account';
@@ -27,7 +27,7 @@ export async function handleTransfer({
 
   // If accounts aren't indexed yet we add them, else we load them
   // First with fromAccount
-  const fromId: string = (token.id).slice(2) + '-' + (data.from).slice(2);
+  const fromId: string = token.id.slice(2) + '-' + data.from.slice(2);
   if (await newAccount(fromId, mysql)) {
     fromAccount = await createAccount(token, fromId, tx, block);
     await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [fromAccount]);
@@ -36,7 +36,7 @@ export async function handleTransfer({
   }
 
   // Then with toAccount
-  const toId: string = (token.id).slice(2) + '-' + (data.to).slice(2);
+  const toId: string = token.id.slice(2) + '-' + data.to.slice(2);
   if (await newAccount(toId, mysql)) {
     toAccount = await createAccount(token, toId, tx, block);
     await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [toAccount]);
@@ -58,6 +58,18 @@ export async function handleTransfer({
   toAccount.tx = tx.transaction_hash!;
 
   // Indexing accounts
-  await mysql.queryAsync(`UPDATE accounttokens SET balance=${fromAccount.balance}, rawBalance=${fromAccount.rawBalance.toString()}, modified=${fromAccount.modified}, tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`);
-  await mysql.queryAsync(`UPDATE accounttokens SET balance=${toAccount.balance}, rawBalance=${toAccount.rawBalance.toString()}, modified=${toAccount.modified}, tx='${toAccount.tx}' WHERE id='${toAccount.id}'`);
+  await mysql.queryAsync(
+    `UPDATE accounttokens SET balance=${
+      fromAccount.balance
+    }, rawBalance=${fromAccount.rawBalance.toString()}, modified=${fromAccount.modified}, tx='${
+      fromAccount.tx
+    }' WHERE id='${fromAccount.id}'`
+  );
+  await mysql.queryAsync(
+    `UPDATE accounttokens SET balance=${
+      toAccount.balance
+    }, rawBalance=${toAccount.rawBalance.toString()}, modified=${toAccount.modified}, tx='${
+      toAccount.tx
+    }' WHERE id='${toAccount.id}'`
+  );
 }
