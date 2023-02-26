@@ -9,7 +9,6 @@ export async function handleTransfer({
   rawEvent,
   mysql
 }: Parameters<CheckpointWriter>[0]) {
-  try {
   if (!rawEvent) return;
   if (!(await isErc20(rawEvent.from_address, block.block_number))) return;
   const format = 'from, to, value(uint256)';
@@ -49,7 +48,7 @@ export async function handleTransfer({
   fromAccount.balance -= convertToDecimal(data.value, token.decimals);
   toAccount.balance += convertToDecimal(data.value, token.decimals);
   // Updating raw balances
-  fromAccount.rawBalance =  BigInt(fromAccount.rawBalance) - BigInt(data.value);
+  fromAccount.rawBalance = BigInt(fromAccount.rawBalance) - BigInt(data.value);
   toAccount.rawBalance = BigInt(toAccount.rawBalance) + BigInt(data.value);
   // Updating modified field
   fromAccount.modified = block.timestamp;
@@ -59,10 +58,6 @@ export async function handleTransfer({
   toAccount.tx = tx.transaction_hash!;
 
   // Indexing accounts
-  await mysql.queryAsync(`UPDATE accounttokens SET balance=${fromAccount.balance}, rawBalance=${fromAccount.rawBalance}, modified=${fromAccount.modified}, tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`);
-  await mysql.queryAsync(`UPDATE accounttokens SET balance=${toAccount.balance}, rawBalance=${toAccount.rawBalance}, modified=${toAccount.modified}, tx='${toAccount.tx}' WHERE id='${toAccount.id}'`);
-  } catch (error) {
-    console.log(error)
-  }
-  
+  await mysql.queryAsync(`UPDATE accounttokens SET balance=${fromAccount.balance}, rawBalance=${fromAccount.rawBalance.toString()}, modified=${fromAccount.modified}, tx='${fromAccount.tx}' WHERE id='${fromAccount.id}'`);
+  await mysql.queryAsync(`UPDATE accounttokens SET balance=${toAccount.balance}, rawBalance=${toAccount.rawBalance.toString()}, modified=${toAccount.modified}, tx='${toAccount.tx}' WHERE id='${toAccount.id}'`);
 }
