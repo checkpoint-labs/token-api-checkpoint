@@ -1,0 +1,19 @@
+scalar BigInt
+
+type AccountToken {
+  id: String! # Equal to <tokenAddress>-<accountAddress>
+  account: String
+  token: Token
+  balance: Float # Parsed balance based on token decimals
+  rawBalance: String # Raw balance without decimals
+  modified: Int # Last modified timestamp in seconds
+  tx: String # Last transaction that modified balance
+}
+
+type Token {
+  id: String! # Token address
+  decimals: Int
+  name: String
+  symbol: String
+  totalSupply: BigInt
+}
