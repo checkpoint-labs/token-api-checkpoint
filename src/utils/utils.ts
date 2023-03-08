@@ -16,8 +16,8 @@ export function convertToDecimal(num: number, decimals: number): number {
 }
 
 export function hexToStr(data: string): string {
-  var hex = data.toString();
-  var str = '';
+  const hex = data.toString();
+  let str = '';
   for (let i = 0; i < hex.length; i += 2)
     str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
   return str;
