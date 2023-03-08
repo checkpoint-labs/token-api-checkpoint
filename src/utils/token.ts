@@ -1,7 +1,6 @@
 import * as starknet from 'starknet';
-import fs from 'fs';
-import path from 'path';
 import { convertToDecimal, hexToStr } from './utils';
+import tokenAbi from '../abis/erc20.json';
 
 const provider = new starknet.Provider({
   sequencer: {
@@ -22,31 +21,29 @@ export type Token = {
 
 export async function newToken(tokenAddress: string, mysql): Promise<boolean> {
   const newToken = await loadToken(tokenAddress, mysql);
-  if (!newToken) return true;
-  else return false;
+  return !newToken;
 }
 
 export async function createToken(tokenAddress: string): Promise<Token> {
-  const tokenAbi = JSON.parse(
-    fs.readFileSync(path.join(__dirname, './contracts/abis/erc20.json')).toString('ascii')
-  );
   const erc20 = new starknet.Contract(tokenAbi, tokenAddress, provider);
+
   const symbol = await erc20.symbol();
   const name = await erc20.name();
   const decimals = await erc20.decimals();
   const totalSupply = await erc20.totalSupply();
-  const metadata: Token = {
+
+  return {
     id: tokenAddress,
     symbol: hexToStr(symbol.res.toString(16)),
     name: hexToStr(name.res.toString(16)),
     decimals: decimals.res.toNumber(),
     totalSupply: convertToDecimal(totalSupply.res.low, decimals.res)
   };
-  return metadata;
 }
 
 export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
-  let token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
+  const token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
+
   return token[0];
 }
 
@@ -75,5 +72,6 @@ export async function isErc20(address: string, block_number: number) {
 
   const result = hasFunctions && hasNoFunctions;
   console.log(result, `Smart contract ${result ? 'matches' : "doesn't match"} desired functions`);
+
   return result;
 }

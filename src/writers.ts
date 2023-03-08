@@ -1,5 +1,5 @@
-import { convertToDecimal, getEvent } from './utils/utils';
 import type { CheckpointWriter } from '@snapshot-labs/checkpoint';
+import { convertToDecimal, getEvent } from './utils/utils';
 import { createToken, isErc20, loadToken, newToken, Token } from './utils/token';
 import { createAccount, newAccount, Account, loadAccount } from './utils/account';
 
@@ -27,7 +27,7 @@ export async function handleTransfer({
 
   // If accounts aren't indexed yet we add them, else we load them
   // First with fromAccount
-  const fromId: string = token.id.slice(2) + '-' + data.from.slice(2);
+  const fromId = `${token.id.slice(2)}-${data.from.slice(2)}`;
   if (await newAccount(fromId, mysql)) {
     fromAccount = await createAccount(token, fromId, tx, block);
     await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [fromAccount]);
@@ -36,7 +36,7 @@ export async function handleTransfer({
   }
 
   // Then with toAccount
-  const toId: string = token.id.slice(2) + '-' + data.to.slice(2);
+  const toId = `${token.id.slice(2)}-${data.to.slice(2)}`;
   if (await newAccount(toId, mysql)) {
     toAccount = await createAccount(token, toId, tx, block);
     await mysql.queryAsync(`INSERT IGNORE INTO accounttokens SET ?`, [toAccount]);
@@ -54,8 +54,8 @@ export async function handleTransfer({
   fromAccount.modified = block.timestamp;
   toAccount.modified = block.timestamp;
   // Updating tx field
-  fromAccount.tx = tx.transaction_hash!;
-  toAccount.tx = tx.transaction_hash!;
+  fromAccount.tx = tx.transaction_hash || '';
+  toAccount.tx = tx.transaction_hash || '';
 
   // Indexing accounts
   await mysql.queryAsync(

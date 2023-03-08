@@ -1,6 +1,6 @@
-# Starknet token api
+# StarkNet token api
 
-This repo is a [Checkpoint](https://checkpoint.fyi) template that allows to retrieve all token holders from Starknet using the `global_events` feature available since the `v^0.1.0-beta.14` of Checkpoint.
+This repo is a [Checkpoint](https://checkpoint.fyi) template that allows to retrieve all token holders from StarkNet using the `global_events` feature available since the `v^0.1.0-beta.14` of Checkpoint.
 
 ## Getting started
 

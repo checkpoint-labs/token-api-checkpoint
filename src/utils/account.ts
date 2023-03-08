@@ -13,12 +13,12 @@ export type Account = {
 
 export async function newAccount(accountId: string, mysql): Promise<boolean> {
   const newAccount = await loadAccount(accountId, mysql);
-  if (!newAccount) return true;
-  else return false;
+
+  return !newAccount;
 }
 
 export async function createAccount(token: Token, accountId: string, tx, block): Promise<Account> {
-  const account: Account = {
+  return {
     id: accountId,
     account: accountId.split('-')[1],
     token: token.id,
@@ -27,12 +27,12 @@ export async function createAccount(token: Token, accountId: string, tx, block):
     modified: block.timestamp / 1000,
     tx: tx.transaction_hash
   };
-  return account;
 }
 
 export async function loadAccount(accountId: string, mysql): Promise<Account> {
-  let account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
+  const account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
     accountId
   ]);
+
   return account[0];
 }
