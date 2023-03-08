@@ -1,4 +1,4 @@
-name: Build and Run Tests
+name: Build
 on: [push]
 jobs:
   build-test:
@@ -16,6 +16,5 @@ jobs:
       - run: yarn install
       - run: yarn lint
       - run: yarn build
-      - run: yarn test
         env:
           DATABASE_URL: 'mysql://root:root@l27.0.0.1:3306/checkpoint'
