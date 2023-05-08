@@ -1,7 +1,8 @@
-import { Token } from './token';
+import { Token } from './erc20';
+import { Nft } from './erc721';
 import { convertToDecimal } from './utils';
 
-export type Account = {
+export type AccountToken = {
   id: string;
   account: string;
   token: string;
@@ -11,13 +12,35 @@ export type Account = {
   tx: string;
 };
 
-export async function newAccount(accountId: string, mysql): Promise<boolean> {
-  const newAccount = await loadAccount(accountId, mysql);
+export type AccountNft = {
+  id: string;
+  account: string;
+  collection: string;
+  tokenId: string;
+  balance: number;
+  name: string;
+  modified: number;
+  tx: string;
+};
+
+export async function newAccountToken(accountId: string, mysql): Promise<boolean> {
+  const newAccount = await loadAccountToken(accountId, mysql);
 
   return !newAccount;
 }
 
-export async function createAccount(token: Token, accountId: string, tx, block): Promise<Account> {
+export async function newAccountNft(accountId: string, mysql): Promise<boolean> {
+  const newAccount = await loadAccountToken(accountId, mysql);
+
+  return !newAccount;
+}
+
+export async function createAccountToken(
+  token: Token,
+  accountId: string,
+  tx,
+  block
+): Promise<AccountToken> {
   return {
     id: accountId,
     account: accountId.split('-')[1],
@@ -29,8 +52,34 @@ export async function createAccount(token: Token, accountId: string, tx, block):
   };
 }
 
-export async function loadAccount(accountId: string, mysql): Promise<Account> {
-  const account: Account = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
+export async function createAccountNft(
+  nft: Nft,
+  accountId: string,
+  tx,
+  block
+): Promise<AccountNft> {
+  return {
+    id: accountId,
+    account: accountId.split('-')[1],
+    collection: nft.id,
+    tokenId: nft.id,
+    balance: 0,
+    name: 'test',
+    modified: block.timestamp / 1000,
+    tx: tx.transaction_hash
+  };
+}
+
+export async function loadAccountToken(accountId: string, mysql): Promise<AccountToken> {
+  const account: AccountToken = await mysql.queryAsync(`SELECT * FROM accounttokens WHERE id = ?`, [
+    accountId
+  ]);
+
+  return account[0];
+}
+
+export async function loadAccountNft(accountId: string, mysql): Promise<AccountNft> {
+  const account: AccountNft = await mysql.queryAsync(`SELECT * FROM accountnfts WHERE id = ?`, [
     accountId
   ]);
 

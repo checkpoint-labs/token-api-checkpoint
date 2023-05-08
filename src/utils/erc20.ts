@@ -71,7 +71,10 @@ export async function isErc20(address: string, block_number: number) {
   );
 
   const result = hasFunctions && hasNoFunctions;
-  console.log(result, `Smart contract ${result ? 'matches' : "doesn't match"} desired functions`);
+  console.log(
+    result,
+    `Erc20 smart contract ${result ? 'matches' : "doesn't match"} desired functions`
+  );
 
   return result;
 }

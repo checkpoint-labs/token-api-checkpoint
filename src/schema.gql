@@ -10,10 +10,28 @@ type AccountToken {
   tx: String # Last transaction that modified balance
 }
 
+type AccountNft {
+  id: String! # Equal to <nftAddress>-<tokenId>-<accountAddress>
+  account: String
+  collection: NftCollection
+  tokenId: String
+  balance: Int
+  name: String
+  modified: Int # Last modified timestamp in seconds
+  tx: String # Last transaction that modified this entry
+}
+
 type Token {
   id: String! # Token address
   decimals: Int
   name: String
   symbol: String
   totalSupply: BigInt
+}
+
+type NftCollection {
+  id: String! # NFT contract address
+  name: String
+  symbol: String
+  totalSupply: Int
 }
