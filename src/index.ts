@@ -23,7 +23,9 @@ const checkpoint = new Checkpoint(config, writers, schema, checkpointOptions);
 // ensures data is always fresh on each re-run
 checkpoint.reset().then(() => {
   // start the indexer
+  checkpoint.resetMetadata().then(() => {
   checkpoint.start();
+  });
 });
 
 const app = express();

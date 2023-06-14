@@ -1,6 +1,6 @@
 {
-  "network_node_url": "https://starknet-goerli.infura.io/v3/46a5dd9727bf48d4a132672d3f376146",
-  "start": 70000,
+  "network_node_url": "http://192.168.1.74:9545",
+  "start": 1,
   "global_events": [
     {
       "name": "Transfer",

@@ -1,6 +1,7 @@
 import * as starknet from 'starknet';
 import { convertToDecimal, hexToStr } from './utils';
 import nftAbi from '../abis/erc721.json';
+import { NftCollection } from '../../.checkpoint/models';
 
 const provider = new starknet.Provider({
   sequencer: {
@@ -11,37 +12,20 @@ const provider = new starknet.Provider({
   }
 });
 
-export type Nft = {
-  id: string;
-  name: string;
-  symbol: string;
-  totalSupply: number;
-};
-
-export async function newNft(nftAddress: string, mysql): Promise<boolean> {
-  const newNft = await loadNft(nftAddress, mysql);
-  return !newNft;
-}
-
-export async function createNft(nftAddress: string): Promise<Nft> {
+export async function createNft(nftAddress: string): Promise<NftCollection> {
   const erc721 = new starknet.Contract(nftAbi, nftAddress, provider);
 
   const symbol = await erc721.symbol();
   const name = await erc721.name();
   const totalSupply = await erc721.totalSupply();
 
-  return {
-    id: nftAddress,
-    symbol: hexToStr(symbol.symbol.toString(16)),
-    name: hexToStr(name.name.toString(16)),
-    totalSupply: totalSupply.totalSupply.low
-  };
-}
+  let nft = new NftCollection(nftAddress);
+  nft.symbol = hexToStr(symbol.symbol.toString(16));
+  nft.name = hexToStr(name.name.toString(16));
+  nft.totalSupply = totalSupply.totalSupply.low;
 
-export async function loadNft(nftAddress: string, mysql): Promise<Nft> {
-  const nft = await mysql.queryAsync(`SELECT * FROM nftcollections WHERE id = ?`, [nftAddress]);
+  return nft;
 
-  return nft[0];
 }
 
 export async function isErc721(address: string, block_number: number) {

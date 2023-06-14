@@ -1,6 +1,7 @@
 import * as starknet from 'starknet';
 import { convertToDecimal, hexToStr } from './utils';
 import tokenAbi from '../abis/erc20.json';
+import { Token } from '../../.checkpoint/models'
 
 const provider = new starknet.Provider({
   sequencer: {
@@ -11,19 +12,6 @@ const provider = new starknet.Provider({
   }
 });
 
-export type Token = {
-  id: string;
-  decimals: number;
-  name: string;
-  symbol: string;
-  totalSupply: number;
-};
-
-export async function newToken(tokenAddress: string, mysql): Promise<boolean> {
-  const newToken = await loadToken(tokenAddress, mysql);
-  return !newToken;
-}
-
 export async function createToken(tokenAddress: string): Promise<Token> {
   const erc20 = new starknet.Contract(tokenAbi, tokenAddress, provider);
 
@@ -32,19 +20,13 @@ export async function createToken(tokenAddress: string): Promise<Token> {
   const decimals = await erc20.decimals();
   const totalSupply = await erc20.totalSupply();
 
-  return {
-    id: tokenAddress,
-    symbol: hexToStr(symbol.res.toString(16)),
-    name: hexToStr(name.res.toString(16)),
-    decimals: decimals.res.toNumber(),
-    totalSupply: convertToDecimal(totalSupply.res.low, decimals.res)
-  };
-}
+  let token = new Token(tokenAddress);
+  token.symbol = hexToStr(symbol.res.toString(16));
+  token.name = hexToStr(name.res.toString(16));
+  token.decimals = decimals.res.toNumber();
+  token.totalSupply = BigInt(convertToDecimal(totalSupply.res.low, decimals.res));
 
-export async function loadToken(tokenAddress: string, mysql): Promise<Token> {
-  const token = await mysql.queryAsync(`SELECT * FROM tokens WHERE id = ?`, [tokenAddress]);
-
-  return token[0];
+  return token;
 }
 
 export async function isErc20(address: string, block_number: number) {
